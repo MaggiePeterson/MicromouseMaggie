@@ -23,30 +23,38 @@ void microMouseServer::studentAI()
  * void foundFinish();
  * void printUI(const char *mesg);
 */
-
+ static int counter; //for ending, counts how many times mouse turnsRight and moveForward
 
 if (!isWallLeft() )
     {turnLeft();
+    counter = 0;
     }
 
 else if (isWallLeft())
     {
         if(!isWallForward() )
            {
+            counter = 0;
            }
 
         else if (isWallForward())
             {
             turnRight();
+            counter++;
             }
         else if (isWallForward() && isWallLeft() && isWallRight())
             {
             turnLeft();
             turnLeft();
+            counter = 0;
             }
     }
 
 moveForward();
 
+if (counter == 4)
+{
+    foundFinish();
+}
 
 }
