@@ -1,6 +1,8 @@
 
 #include "micromouseserver.h"
 
+
+
 void microMouseServer::studentAI()
 {
 /*
@@ -21,5 +23,30 @@ void microMouseServer::studentAI()
  * void foundFinish();
  * void printUI(const char *mesg);
 */
+
+
+if (!isWallLeft() )
+    {turnLeft();
+    }
+
+else if (isWallLeft())
+    {
+        if(!isWallForward() )
+           {
+           }
+
+        else if (isWallForward())
+            {
+            turnRight();
+            }
+        else if (isWallForward() && isWallLeft() && isWallRight())
+            {
+            turnLeft();
+            turnLeft();
+            }
+    }
+
+moveForward();
+
 
 }
