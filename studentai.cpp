@@ -4,7 +4,7 @@
 //north 0, east 1, south, 2, west 3
 
 
-void myTurnLeft(int *dir)
+void myTurnLeft(int *dir) //changes direction of mouse everytime turns left
 {
 
    if (*dir ==0)
@@ -19,7 +19,7 @@ void myTurnLeft(int *dir)
 
 }
 
-void myTurnRight(int *dir)
+void myTurnRight(int *dir) //sets direction of mouse everytime turns right
 {
     if (*dir==3)
     {
@@ -31,7 +31,7 @@ void myTurnRight(int *dir)
     }
 }
 
-void myMoveForward(int *dir, int *x,int *y )
+void myMoveForward(int *dir, int *x,int *y ) //changes x or y coodinates when moving forward
 {
     if (*dir == 0)
     {
@@ -50,9 +50,10 @@ void myMoveForward(int *dir, int *x,int *y )
     {
         *x--;
     }
+    mazeMap[x][y]++;
 }
 
-int numberOfTimesLeft(int dir, int x, int y, int (&map)[20][20])
+int numberOfTimesLeft(int dir, int x, int y, int (&mazeMap)[20][20]) //returns current position ?
 {
     myTurnLeft(&dir);
     myMoveForward(&dir, &x, &y);
@@ -74,11 +75,11 @@ int numberOfTimesLeft(int dir, int x, int y, int (&map)[20][20])
     }
 
 
-    return map[x][y];
+    return mazeMap[x][y];
 
 }
 
-int numberOfTimesRight(int dir, int x, int y, int (&map)[20][20])
+int numberOfTimesRight(int dir, int x, int y, int (&mazeMap)[20][20]) //returns current position after turning right
 {
     myTurnRight(&dir);
     myMoveForward(&dir, &x, &y);
@@ -99,10 +100,10 @@ int numberOfTimesRight(int dir, int x, int y, int (&map)[20][20])
         y= 19;
     }
 
-    return map[x][y];
+    return mazeMap[x][y];
 }
 
-int numberOfTimesForward(int dir, int x, int y, int (&map)[20][20])
+int numberOfTimesForward(int dir, int x, int y, int (&mazeMap)[20][20]) //returns position of forward coodinate...
 {
     myMoveForward(&dir, &x, &y);
     if (x<0)
@@ -122,7 +123,7 @@ int numberOfTimesForward(int dir, int x, int y, int (&map)[20][20])
         y= 19;
     }
 
-    return map[x][y];
+    return mazeMap[x][y];
 }
 
 
@@ -147,17 +148,50 @@ void microMouseServer::studentAI()
  * void printUI(const char *mesg);
 */
 static int counterR, counterL; //for ending, counts how many times mouse turnsRight and moveForward
-static int map[20][20] = {0};
+static int mazeMap[20][20] = {0};
 static int x=0, y=0, dir =0;
 
-/*if (map[x][y] < map[x][y+1])
-{
-    //foo
-}
-else if (map[x][y] < map[x][y-1])
-{}
-*/
+//add while loop to continue
+int minT = mazeMap[x][y+1]; //minT = min amount of times visited coordinate
 
+//.. finds minimun direction visited
+if (mazeMap[x][y-1]< minT)
+{
+    minT = mazeMap[x][y-1];
+    minDir = 2;
+}
+else if (mazeMap[x+1][y]< minT)
+{
+    minT = mazeMap[x+1][y];
+}
+else // (mazeMap[x-1][y]< minT)
+{
+    minT = mazeMap[x-1][y];
+}
+
+//if min direction is this, go this direction
+
+if (minT == mazeMap[x][y+1] )
+{
+
+}
+
+else if ()
+{
+
+}
+else if ()
+{
+
+}
+else // (mazeMap[x-1][y]< minT)
+{
+    minT = mazeMap[x-1][y];
+}
+
+
+
+// left hand rule algorithm ...
 
 if (!isWallLeft() )
     {turnLeft();
