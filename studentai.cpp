@@ -129,6 +129,7 @@ int numberOfTimesForward(int dir, int x, int y, int (&mazeMap)[20][20]) //return
 
 void microMouseServer::studentAI()
 {
+
 /*
  * The following are the eight functions that you can call. Feel free to create your own fuctions as well.
  * Remember that any solution that calls moveForward more than once per call of studentAI() will have points deducted.
@@ -147,14 +148,16 @@ void microMouseServer::studentAI()
  * void foundFinish();
  * void printUI(const char *mesg);
 */
+
 static int counterR, counterL; //for ending, counts how many times mouse turnsRight and moveForward
 static int mazeMap[20][20] = {0};
 static int x=0, y=0, dir =0;
 
 //add while loop to continue
 int minT = mazeMap[x][y+1]; //minT = min amount of times visited coordinate
+int minDir = 0; //north 0, east 1, south, 2, west 3 ... Sets direction of minimum coodinate
 
-//.. finds minimun direction visited
+// finds coodinate least visited relative to current position x,y
 if (mazeMap[x][y-1]< minT)
 {
     minT = mazeMap[x][y-1];
@@ -163,32 +166,32 @@ if (mazeMap[x][y-1]< minT)
 else if (mazeMap[x+1][y]< minT)
 {
     minT = mazeMap[x+1][y];
+    minDir = 1;
 }
 else // (mazeMap[x-1][y]< minT)
 {
     minT = mazeMap[x-1][y];
+    minDir = 3;
 }
 
-//if min direction is this, go this direction
+//compares Current Direction to Direction/ placement of cood least visited, then decides how to turn
 
-if (minT == mazeMap[x][y+1] )
+if (&dir == minDir )
 {
-
+    moveForward();
+    myMoveForward(&x,&y,&dir);
 }
 
-else if ()
+else if (&dir - minDir == 3 || &dir - minDir == -1) //current direction 3 minus minDirection 0, = 3, turn right
 {
-
+    turnRight();
+    myTurnRight(&dir);
 }
-else if ()
+else if (&dir - minDir == 1 || &dir - minDir == -3) //ex. CurrentDir = 2(south), minDir = 1(east), turn left
 {
-
+    turnLeft();
+    myTurnLeft(&dir);
 }
-else // (mazeMap[x-1][y]< minT)
-{
-    minT = mazeMap[x-1][y];
-}
-
 
 
 // left hand rule algorithm ...
