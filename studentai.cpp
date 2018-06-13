@@ -31,32 +31,32 @@ void myTurnRight(int *dir) //sets direction of mouse everytime turns right
     }
 }
 
-void myMoveForward(int *dir, int *x,int *y ) //changes x or y coodinates when moving forward
+void myMoveForward(int *dir, int *x,int *y,int (&mazeMap)[20][20] ) //changes x or y coodinates when moving forward
 {
     if (*dir == 0)
     {
-        *y++;
+        *y+=1;
 
     }
     else if (*dir==1)
     {
-        *x++;
+        *x+=1;
     }
     else if (*dir==2)
     {
-        *y--;
+        *y+=1;
     }
     else // dir ==3
     {
-        *x--;
+        *x+=1;
     }
-    mazeMap[x][y]++;
+    mazeMap[*x][*y]++;
 }
 
 int numberOfTimesLeft(int dir, int x, int y, int (&mazeMap)[20][20]) //returns current position ?
 {
     myTurnLeft(&dir);
-    myMoveForward(&dir, &x, &y);
+    myMoveForward(&dir, &x, &y,mazeMap );
     if (x<0)
     {
         x= 0;
@@ -82,7 +82,7 @@ int numberOfTimesLeft(int dir, int x, int y, int (&mazeMap)[20][20]) //returns c
 int numberOfTimesRight(int dir, int x, int y, int (&mazeMap)[20][20]) //returns current position after turning right
 {
     myTurnRight(&dir);
-    myMoveForward(&dir, &x, &y);
+    myMoveForward(&dir, &x, &y,mazeMap );
     if (x<0)
     {
         x= 0;
@@ -105,7 +105,7 @@ int numberOfTimesRight(int dir, int x, int y, int (&mazeMap)[20][20]) //returns 
 
 int numberOfTimesForward(int dir, int x, int y, int (&mazeMap)[20][20]) //returns position of forward coodinate...
 {
-    myMoveForward(&dir, &x, &y);
+    myMoveForward(&dir, &x, &y, mazeMap );
     if (x<0)
     {
         x= 0;
@@ -176,23 +176,24 @@ else // (mazeMap[x-1][y]< minT)
 
 //compares Current Direction to Direction/ placement of cood least visited, then decides how to turn
 
-if (&dir == minDir )
+if (*&dir == minDir )
 {
-    moveForward();
-    myMoveForward(&x,&y,&dir);
+    //moveForward();
+   // myMoveForward(&x,&y,&dir, mazeMap );
 }
 
-else if (&dir - minDir == 3 || &dir - minDir == -1) //current direction 3 minus minDirection 0, = 3, turn right
+else if (*&dir - minDir == 3 || *&dir - minDir == -1) //current direction 3 minus minDirection 0, = 3, turn right
 {
     turnRight();
     myTurnRight(&dir);
 }
-else if (&dir - minDir == 1 || &dir - minDir == -3) //ex. CurrentDir = 2(south), minDir = 1(east), turn left
+else if (*&dir - minDir == 1 || *&dir - minDir == -3) //ex. CurrentDir = 2(south), minDir = 1(east), turn left
 {
     turnLeft();
     myTurnLeft(&dir);
 }
-
+//moveForward();
+//myMoveForward(&x,&y,&dir, mazeMap );
 
 // left hand rule algorithm ...
 
@@ -230,7 +231,7 @@ else
     }
 
 moveForward();
-myMoveForward(&x,&y,&dir);
+myMoveForward(&x,&y,&dir, mazeMap );
 
 
 
