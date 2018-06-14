@@ -150,32 +150,112 @@ void microMouseServer::studentAI()
 */
 
 static int counterR, counterL; //for ending, counts how many times mouse turnsRight and moveForward
- static int mazeMap[20][20]={0};
+static int mazeMap[20][20]={0};
 static int x=0, y=0, dir =0;
 
-//add while loop to continue
-int minT = mazeMap[x][y+1]; //minT = min amount of times visited coordinate
-int minDir = 0; //north 0, east 1, south, 2, west 3 ... Sets direction of minimum coodinate
 
-// finds coodinate least visited relative to current position x,y
-if (mazeMap[x][y-1]< minT)
+static int minT =  200000000; //minT = min amount of times visited coordinate
+static int minDir =0; //north 0, east 1, south, 2, west 3 ... Sets direction of minimum coodinate
+
+
+//if (mazeMap[x][y+1]< minT) // finds coodinate least visited relative to current position x,y
+//{
+//    minT = mazeMap[x][y+1];
+//    minDir = 2;
+//}
+//else if (mazeMap[x+1][y]< minT)
+//{
+//    minT = mazeMap[x+1][y];
+//    minDir = 1;
+//}
+//else if (mazeMap[x-1][y]< minT)
+//{
+//    minT = mazeMap[x-1][y];
+//    minDir = 3;
+//}
+
+//------------------------------ new check min statement
+switch (dir)
 {
-    minT = mazeMap[x][y-1];
-    minDir = 2;
+    case 0:{
+
+            if (!isWallForward() && mazeMap[x][y-1] < minT)
+            {
+                minT = mazeMap[x][y-1];
+                minDir = 0;
+            }
+            if (!isWallRight() && mazeMap[x+1][y]< minT)
+            {
+                minT = mazeMap[x+1][y];
+                minDir = 1;
+            }
+            if (!isWallLeft() && mazeMap[x-1][y]< minT) // finds coodinate least visited relative to current position x,y
+            {
+                minT = mazeMap[x-1][y];
+                minDir = 2;
+           }
+        break;
+    }
+
+case 1:{
+
+        if (!isWallLeft() && mazeMap[x][y-1] < minT)
+        {
+            minT = mazeMap[x][y-1];
+            minDir = 3;
+        }
+        if (!isWallForward() && mazeMap[x+1][y]< minT)
+        {
+            minT = mazeMap[x+1][y];
+            minDir = 0;
+        }
+        if (!isWallRight() && mazeMap[x][y+1]< minT) // finds coodinate least visited relative to current position x,y
+        {
+            minT = mazeMap[x-1][y];
+            minDir = 2;
+       }
+    break;
 }
-else if (mazeMap[x+1][y]< minT)
-{
-    minT = mazeMap[x+1][y];
-    minDir = 1;
-}
-else if (mazeMap[x-1][y]< minT)
-{
-    minT = mazeMap[x-1][y];
-    minDir = 3;
+case 2:{
+
+        if (!isWallForward() && mazeMap[x][y-1] < minT)
+        {
+            minT = mazeMap[x][y-1];
+            minDir = 0;
+        }
+        if (!isWallRight() && mazeMap[x+1][y]< minT)
+        {
+            minT = mazeMap[x+1][y];
+            minDir = 1;
+        }
+        if (!isWallLeft() && mazeMap[x-1][y]< minT) // finds coodinate least visited relative to current position x,y
+        {
+            minT = mazeMap[x-1][y];
+            minDir = 3;
+       }
+    break;
 }
 
+case 3:{
 
-
+        if (!isWallRight() && mazeMap[x][y-1] < minT)
+        {
+            minT = mazeMap[x][y-1];
+            minDir = 1;
+        }
+        if (!isWallLeft() && mazeMap[x][y+1]< minT)
+        {
+            minT = mazeMap[x+1][y];
+            minDir = 3;
+        }
+        if (!isWallForward() && mazeMap[x-1][y]< minT) // finds coodinate least visited relative to current position x,y
+        {
+            minT = mazeMap[x-1][y];
+            minDir = 0;
+       }
+    break;
+}
+}
 //compares Current Direction to Direction/ placement of cood least visited, then decides how to turn.........
 
 
@@ -204,7 +284,7 @@ if (!isWallLeft() )
     counterL++;
     }
 
-else
+else //when wall is left..
     {
         if(!isWallForward() )
            {
@@ -219,7 +299,7 @@ else
             counterR++;
             counterL=0;
             }
-        else if (isWallForward() && isWallLeft() && isWallRight())
+       else if (isWallForward() && isWallLeft() && isWallRight())
             {
             turnLeft();
             myTurnLeft(&dir);
