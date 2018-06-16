@@ -1,4 +1,3 @@
-
 #include "micromouseserver.h"
 
 
@@ -12,52 +11,55 @@ using namespace std;
     2
 */
 
+int dir;
+int y =0;
+int x=0;
 
-void myTurnLeft(int *dir) //changes direction of mouse everytime turns left
+void myTurnLeft() //changes direction of mouse everytime turns left
 {
 
-   if (*dir ==0)
+   if (dir ==0)
   {
-       *dir=3;
+       dir=3;
    }
    else
    {
-       *dir-=1;
+       dir-=1;
    }
 
 }
 
-void myTurnRight(int *dir) //sets direction of mouse everytime turns right
+void myTurnRight() //sets direction of mouse everytime turns right
 {
-    if (*dir==3)
+    if (dir==3)
     {
-        *dir=0;
+        dir=0;
     }
     else
     {
-        *dir+=1;
+        dir+=1;
     }
 }
 
-void myMoveForward(int *dir, int *x,int *y, int mazeMap[20][20]) //changes x or y coodinates when moving forward
+void myMoveForward(int mazeMap[20][20]) //changes x or y coodinates when moving forward
 {
-     mazeMap[*x][*y]+=1;//increments value in that position, counts how many times been to coodinate
+     mazeMap[x][y]+=1;//increments value in that position, counts how many times been to coodinate
     if (dir == 0)
     {
-        *y+=1;
+        y+=1;
 
     }
-    else if (*dir==1)
+    else if (dir==1)
     {
-        *x+=1;
+        x+=1;
     }
-    else if (*dir==2)
+    else if (dir==2)
     {
-        *y-=1;
+        y-=1;
     }
     else // dir ==3
     {
-        *x-=1;
+        x-=1;
     }
 }
 
@@ -84,7 +86,6 @@ int numberOfTimesLeft(int dir, int x, int y, int (&mazeMap)[20][20]) //returns c
     }
     return mazeMap[x][y];
 }
-
 int numberOfTimesRight(int dir, int x, int y, int (&mazeMap)[20][20]) //returns current position after turning right
 {
     //myTurnRight(&dir);
@@ -107,7 +108,6 @@ int numberOfTimesRight(int dir, int x, int y, int (&mazeMap)[20][20]) //returns 
     }
     return mazeMap[x][y];
 }
-
 int numberOfTimesForward(int dir, int x, int y, int (&mazeMap)[20][20]) //returns position of forward coodinate...
 {
     myMoveForward(&dir, &x, &y, mazeMap );
@@ -154,13 +154,12 @@ void microMouseServer::studentAI()
     */
 
     static int counterR, counterL; //for ending, counts how many times mouse turnsRight and moveForward
-    static int x=0;
-    static int y=0;
-    static int dir = 0;
-    static int mazeMap[20][20]= {0};
-
-    int minT =  mazeMap[x-1][y]; //minT = min amount of times visited coordinate
-    int minDir = 1; //north 0, east 1, south, 2, west 3 ... Sets direction of minimum coodinate
+   // static int x=0;
+    //static int y=0;
+   // static int dir = 0;
+    //static int mazeMap[20][20]= {0};
+   static int minT =  mazeMap[x-1][y]; //minT = min amount of times visited coordinate
+   static int minDir = 1; //north 0, east 1, south, 2, west 3 ... Sets direction of minimum coodinate
 
     switch (dir) //finds min direction relative to current orientation of mouse, without a wall
     {
@@ -256,19 +255,19 @@ void microMouseServer::studentAI()
     else if ( dir - minDir == 3 || dir - minDir == -1) //current direction 3 minus minDirection 0, = 3, turn right
     {
         turnRight();
-        myTurnRight(&dir);
+        myTurnRight();
     }
     else if (dir - minDir == 1 || dir - minDir == -3) //ex. CurrentDir = 2(south), minDir = 1(east), turn left
     {
         turnLeft();
-        myTurnLeft(&dir);
+        myTurnLeft();
     }
 
     // ORIGINAL left hand rule algorithm ...........................................................
 
     if (!isWallLeft())
         {turnLeft();
-        myTurnLeft(&dir);
+        myTurnLeft();
         counterR = 0;
         counterL++;
         }
@@ -284,23 +283,23 @@ void microMouseServer::studentAI()
             else if (!isWallRight() )
                 {
                 turnRight();
-                myTurnRight(&dir);
+                myTurnRight();
                 counterR++;
                 counterL=0;
                 }
            else if (isWallForward() && isWallLeft() && isWallRight())
                 {
                 turnLeft();
-                myTurnLeft(&dir);
+                myTurnLeft();
                 turnLeft();
-                myTurnLeft(&dir);
+                myTurnLeft();
                 counterR = 0;
                 counterL= 0;
                 }
         }
 
     moveForward();
-    myMoveForward(&x,&y,&dir, mazeMap);
+    myMoveForward(mazeMap);
 
 
 
