@@ -12,6 +12,7 @@ using namespace std;
     2
 */
 
+
 void myTurnLeft(int *dir) //changes direction of mouse everytime turns left
 {
 
@@ -40,8 +41,8 @@ void myTurnRight(int *dir) //sets direction of mouse everytime turns right
 
 void myMoveForward(int *dir, int *x,int *y, int mazeMap[20][20]) //changes x or y coodinates when moving forward
 {
-
-    if (*dir == 0)
+     mazeMap[*x][*y]+=1;//increments value in that position, counts how many times been to coodinate
+    if (dir == 0)
     {
         *y+=1;
 
@@ -58,14 +59,13 @@ void myMoveForward(int *dir, int *x,int *y, int mazeMap[20][20]) //changes x or 
     {
         *x-=1;
     }
-     mazeMap[*x][*y]+=1; //after mouse moves there, update value in that spot of the array
-
 }
 
+/*
 int numberOfTimesLeft(int dir, int x, int y, int (&mazeMap)[20][20]) //returns current position ?
 {
-    myTurnLeft(&dir);
-    myMoveForward(&dir, &x, &y, mazeMap );
+    //myTurnLeft(&dir);
+   //myMoveForward(&dir, &x, &y, mazeMap );
     if (x<0)
     {
         x= 0;
@@ -82,16 +82,13 @@ int numberOfTimesLeft(int dir, int x, int y, int (&mazeMap)[20][20]) //returns c
     {
         y= 19;
     }
-
-
     return mazeMap[x][y];
-
 }
 
 int numberOfTimesRight(int dir, int x, int y, int (&mazeMap)[20][20]) //returns current position after turning right
 {
-    myTurnRight(&dir);
-    myMoveForward(&dir, &x, &y,mazeMap );
+    //myTurnRight(&dir);
+    //myMoveForward(&dir, &x, &y,mazeMap );
     if (x<0)
     {
         x= 0;
@@ -108,7 +105,6 @@ int numberOfTimesRight(int dir, int x, int y, int (&mazeMap)[20][20]) //returns 
     {
         y= 19;
     }
-
     return mazeMap[x][y];
 }
 
@@ -131,10 +127,9 @@ int numberOfTimesForward(int dir, int x, int y, int (&mazeMap)[20][20]) //return
     {
         y= 19;
     }
-
     return mazeMap[x][y];
 }
-
+*/
 
 void microMouseServer::studentAI()
 {
@@ -159,7 +154,9 @@ void microMouseServer::studentAI()
     */
 
     static int counterR, counterL; //for ending, counts how many times mouse turnsRight and moveForward
-    static int x=0, y=0, dir = 0;
+    static int x=0;
+    static int y=0;
+    static int dir = 0;
     static int mazeMap[20][20]= {0};
 
     int minT =  mazeMap[x-1][y]; //minT = min amount of times visited coordinate
@@ -317,7 +314,7 @@ void microMouseServer::studentAI()
     cout<<endl;
     for(int i=0; i<20; i++){
         for(int j=0; j<20; j++){
-            cout<<mazeMap[i][j];
+            cout<<mazeMap[j][i];
         }
         cout<<endl;
     }
