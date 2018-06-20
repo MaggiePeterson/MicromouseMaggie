@@ -98,7 +98,8 @@ void microMouseServer::studentAI()
      * void printUI(const char *mesg);
     */
 
-   static int counterR, counterL; //for ending, counts how many times mouse turnsRight and moveForward
+   static int counterR;
+   static int counterL; //for ending, counts how many times mouse turnsRight and moveForward
    static int x=0;
    static int y=0;
    static int dir = 0;
@@ -107,65 +108,57 @@ void microMouseServer::studentAI()
 
     // ORIGINAL left hand rule algorithm ...........................................................
 
-    if (!isWallLeft()  && (!isWallForward() && ((numberOfTimesLeft(dir, x, y, mazeMap) < numberOfTimesForward(dir, x, y, mazeMap))) ) )
-    {
-        turnLeft();
-        myTurnLeft(&dir);
-        counterR = 0;
-        counterL++;
-    }
-
-    else if (!isWallLeft() && (!isWallForward() && ((numberOfTimesForward(dir, x, y, mazeMap) < numberOfTimesLeft(dir, x, y, mazeMap))) ) )
+   if (!isWallLeft())
     {
 
-        counterR = 0;
-        counterL =0;
-    }
-
-    else
+       if (!isWallForward() && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)))
         {
-            if(!isWallForward()   && (!isWallRight() && (numberOfTimesForward(dir, x, y, mazeMap) < numberOfTimesRight(dir, x, y, mazeMap))))
-               {
-                counterR = 0;
-                counterL = 0;
-               }
-
-            else if (!isWallRight()  && (numberOfTimesRight(dir, x, y, mazeMap) < numberOfTimesForward(dir, x, y, mazeMap)))
-                {
-                turnRight();
-                myTurnRight(&dir);
-                counterR++;
-                counterL=0;
-                }
-           else if (isWallForward() && isWallLeft() && isWallRight())
-                {
-                turnLeft();
-                myTurnLeft(&dir);
-                turnLeft();
-                myTurnLeft(&dir);
-                counterR = 0;
-                counterL= 0;
-                }
+           counterR = 0;
+           counterL = 0;
         }
+      else
+        {
+           turnLeft();
+           myTurnLeft(&dir);
+           counterR = 0;
+           counterL++;
+         }
+    }
+   else
+   {
+       if(!isWallForward() && !isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesForward(dir, x, y,mazeMap) ) || (!isWallRight() && isWallForward()) )
+       {
+           turnRight();
+           myTurnRight(&dir);
+           counterR++;
+           counterL=0;
+       }
+       else if (isWallForward() && isWallRight())
+       {
+           turnLeft();
+           myTurnLeft(&dir);
+           turnLeft();
+           myTurnLeft(&dir);
+           counterR = 0;
+           counterL= 0;
+       }
+       else
+       {
+           counterR = 0;
+           counterL = 0;
+       }
 
-    moveForward();
-    myMoveForward(&x, &y, &dir, mazeMap);
+    }
+
+   moveForward();
+   myMoveForward(&x, &y, &dir, mazeMap);
 
 
-
-    if (counterR == 3 || counterL == 3)
+    if (counterR == 3 || counterL == 3 && (isWallLeft() || isWallRight()) )
     {
         foundFinish();
     }
 
-//----------see value in array ------------------------- (issue: doesnt update like expected)
-    cout<<endl;
-    for(int i=0; i<20; i++){
-        for(int j=0; j<20; j++){
-            cout<<mazeMap[j][i];
-        }
-        cout<<endl;
-    }
-    cout<<endl;
+
 
 }
