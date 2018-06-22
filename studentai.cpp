@@ -1,9 +1,5 @@
 #include "micromouseserver.h"
 
-
-#include <iostream>
-using namespace std;
-
 //DIR: forward 0, right 1, down 2, left 3
 
 /*   0
@@ -14,9 +10,9 @@ using namespace std;
 void myTurnLeft(int *dir) //changes direction of mouse everytime turns left
 {
    if (*dir ==0)
-  {
+     {
        *dir=3;
-   }
+     }
    else
    {
        *dir-=1;
@@ -76,37 +72,16 @@ int numberOfTimesForward(int dir, int x, int y, int (&mazeMap)[20][20] )
     myMoveForward(&x, &y, &dir, mazeMap);
     return mazeMap[x][y];
 }
+
 void microMouseServer::studentAI()
 {
 
-    /*
-     * The following are the eight functions that you can call. Feel free to create your own fuctions as well.
-     * Remember that any solution that calls moveForward more than once per call of studentAI() will have points deducted.
-     *
-     *The following functions return if there is a wall in their respective directions
-     *bool isWallLeft();
-     *bool isWallRight();
-     *bool isWallForward();
-     *
-     *The following functions move the mouse. Move forward returns if the mouse was able to move forward and can be used for error checking
-     *bool moveForward();
-     *void turnLeft();
-     *void turnRight();
-     *
-     * The following functions are called when you need to output something to the UI or when you have finished the maze
-     * void foundFinish();
-     * void printUI(const char *mesg);
-    */
-
-   static int counterR;
-   static int counterL; //for ending, counts how many times mouse turnsRight and moveForward
+   static int counterR; //for ending, counts how many times mouse turnsRight and moveForward
+   static int counterL;
    static int x=0;
    static int y=0;
    static int dir = 0;
    static int mazeMap[20][20]= {0};
-
-
-    // ORIGINAL left hand rule algorithm ...........................................................
 
    if (!isWallLeft())
     {
@@ -116,6 +91,13 @@ void microMouseServer::studentAI()
            counterR = 0;
            counterL = 0;
         }
+      else if (!isWallForward() && !isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) )
+       {
+           turnRight();
+           myTurnRight(&dir);
+           counterR++;
+           counterL=0;
+       }
       else
         {
            turnLeft();
@@ -139,6 +121,7 @@ void microMouseServer::studentAI()
            myTurnLeft(&dir);
            turnLeft();
            myTurnLeft(&dir);
+
            counterR = 0;
            counterL= 0;
        }
@@ -154,7 +137,7 @@ void microMouseServer::studentAI()
    myMoveForward(&x, &y, &dir, mazeMap);
 
 
-    if (counterR == 3 || counterL == 3 && (isWallLeft() || isWallRight()) )
+    if (counterR == 3 || counterL == 3 )
     {
         foundFinish();
     }
