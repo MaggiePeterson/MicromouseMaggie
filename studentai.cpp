@@ -10,47 +10,47 @@
 void myTurnLeft(int *dir) //changes direction of mouse everytime turns left
 {
    if (*dir ==0)
-     {
+    {
        *dir=3;
-     }
+    }
    else
-   {
+    {
        *dir-=1;
-   }
+    }
 }
 
 void myTurnRight(int *dir) //sets direction of mouse everytime turns right
 {
     if (*dir==3)
-    {
+     {
         *dir=0;
-    }
+     }
     else
-    {
+     {
         *dir+=1;
-    }
+     }
 }
 
 void myMoveForward(int *x, int *y, int *dir, int (&mazeMap)[20][20]) //changes x or y coodinates when moving forward
 {
-     mazeMap[*x][*y]+=1;//increments value in that position, counts how many times been to coodinate
-    if (*dir == 0)
-    {
-        *y+=1;
+     mazeMap[*x][*y]+=1; //increments value in that position, counts how many times been to coodinate
 
-    }
+    if (*dir == 0)
+     {
+        *y+=1;
+      }
     else if (*dir==1)
-    {
+     {
         *x+=1;
-    }
+     }
     else if (*dir==2)
-    {
+     {
         *y-=1;
-    }
+     }
     else // dir ==3
-    {
+     {
         *x-=1;
-    }
+     }
 }
 
 int numberOfTimesLeft(int dir, int x, int y, int (&mazeMap)[20][20] )
@@ -91,7 +91,7 @@ void microMouseServer::studentAI()
            counterR = 0;
            counterL = 0;
         }
-      else if (!isWallForward() && !isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) )
+      else if (!isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) )
        {
            turnRight();
            myTurnRight(&dir);
@@ -108,14 +108,20 @@ void microMouseServer::studentAI()
     }
    else
    {
-       if(!isWallForward() && !isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesForward(dir, x, y,mazeMap) ) || (!isWallRight() && isWallForward()) )
+       if (!isWallForward() && numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesRight(dir, x, y,mazeMap))
+       {
+           counterR = 0;
+           counterL = 0;
+       }
+      else  if(!isWallRight())
        {
            turnRight();
            myTurnRight(&dir);
            counterR++;
            counterL=0;
        }
-       else if (isWallForward() && isWallRight())
+
+       else if (isWallForward() && isWallRight()) //dead end
        {
            turnLeft();
            myTurnLeft(&dir);
@@ -125,11 +131,6 @@ void microMouseServer::studentAI()
            counterR = 0;
            counterL= 0;
        }
-       else
-       {
-           counterR = 0;
-           counterL = 0;
-       }
 
     }
 
@@ -138,10 +139,9 @@ void microMouseServer::studentAI()
 
 
     if (counterR == 3 || counterL == 3 )
-    {
+       {
         foundFinish();
-    }
-
+       }
 
 
 }
