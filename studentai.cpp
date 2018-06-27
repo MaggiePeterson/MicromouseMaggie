@@ -75,7 +75,6 @@ int numberOfTimesForward(int dir, int x, int y, int (&mazeMap)[20][20] )
 
 void microMouseServer::studentAI()
 {
-
    static int counterR; //for ending, counts how many times mouse turnsRight and moveForward
    static int counterL;
    static int x=0;
@@ -108,12 +107,12 @@ void microMouseServer::studentAI()
     }
    else
    {
-       if (!isWallForward() && numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesRight(dir, x, y,mazeMap))
+       if (!isWallForward() && !isWallRight() && numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesRight(dir, x, y,mazeMap) || isWallRight() && !isWallForward() )
        {
            counterR = 0;
            counterL = 0;
        }
-      else  if(!isWallRight())
+     else  if(!isWallRight() )
        {
            turnRight();
            myTurnRight(&dir);
@@ -138,10 +137,9 @@ void microMouseServer::studentAI()
    myMoveForward(&x, &y, &dir, mazeMap);
 
 
-    if (counterR == 3 || counterL == 3 )
+    if (counterR == 3 || counterL == 3)
        {
         foundFinish();
        }
-
 
 }
