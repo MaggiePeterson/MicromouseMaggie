@@ -32,13 +32,13 @@ void myMoveForward(int *x, int *y, int *dir, int (&mazeMap)[41][41]) //changes x
      mazeMap[*x][*y]+=1; //increments value in that position, counts how many times been to coodinate
 
     if (*dir == 0) //+2 because space in middle is space for wall
-        *y+=2;
+        *y-=2;
 
     else if (*dir==1)     
         *x+=2;
 
     else if (*dir==2)    
-        *y-=2;
+        *y+=2;
 
     else // dir ==3     
         *x-=2;
@@ -69,8 +69,8 @@ void microMouseServer::studentAI()
 {
    static int counterR; //for ending, counts how many times mouse turnsRight and moveForward
    static int counterL;
-   static int x=0;
-   static int y=0;
+   static int x=1;
+   static int y=39;
    static int dir = 0;
    static int mazeMap[41][41]= {0}; //41 spaces, walls have space in array
 
@@ -136,7 +136,7 @@ void microMouseServer::studentAI()
        case 0: //mouse is forward
        {
             if(isWallForward())
-                mazeMap[x][y+1] = 99;
+                mazeMap[x][y-1] = 99;
             if(isWallRight())
                 mazeMap[x+1][y] = 99;
             if(isWallLeft())
@@ -147,14 +147,14 @@ void microMouseServer::studentAI()
             if(isWallForward())
                 mazeMap[x+1][y] = 99;
             if(isWallRight())
-                mazeMap[x][y-1] = 99;
-            if(isWallLeft())
                 mazeMap[x][y+1] = 99;
+            if(isWallLeft())
+                mazeMap[x][y-1] = 99;
        }
        case 2: //mouse is down
        {
             if(isWallForward())
-                mazeMap[x][y-1] = 99;
+                mazeMap[x][y+1] = 99;
             if(isWallRight())
                 mazeMap[x-1][y] = 99;
             if(isWallLeft())
@@ -165,9 +165,9 @@ void microMouseServer::studentAI()
             if(isWallForward())
                 mazeMap[x-1][y] = 99;
             if(isWallRight() )
-                mazeMap[x][y+1] = 99;
-            if(isWallLeft() )
                 mazeMap[x][y-1] = 99;
+            if(isWallLeft() )
+                mazeMap[x][y+1] = 99;
        }
    }
 
@@ -183,7 +183,7 @@ void microMouseServer::studentAI()
     cout<<endl;
         for(int i=0; i<41; i++){
             for(int j=0; j<41; j++){
-                cout<<mazeMap[i][j]<<" ";
+                cout<<mazeMap[j][i]<<" ";
             }
             cout<<endl;
        }
