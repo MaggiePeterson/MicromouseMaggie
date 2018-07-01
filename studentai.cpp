@@ -11,6 +11,9 @@ using namespace std;
 struct node {
 
     int timesVisited;
+    bool finished = false;
+
+    node* previousNode = NULL;
     node* north = NULL;
     node* east = NULL;
     node* south = NULL;
@@ -39,9 +42,9 @@ void myTurnRight(int *dir) //sets direction of mouse everytime turns right
         *dir+=1;
 }
 
-void myMoveForward(int *x, int *y, int *dir, int (&mazeMap)[20][20]) //changes x or y coodinates when moving forward
+void myMoveForward(int *x, int *y, int *dir, node (mazeMap)[20][20]) //changes x or y coodinates when moving forward
 {
-     mazeMap[*x][*y]+=1; //increments value in that position, counts how many times been to coodinate
+     mazeMap[*x][*y].timesVisited+=1; //increments value in that position, counts how many times been to coodinate
 
     if (*dir == 0)
         *y-=1;
@@ -57,25 +60,26 @@ void myMoveForward(int *x, int *y, int *dir, int (&mazeMap)[20][20]) //changes x
 
 }
 
-int numberOfTimesLeft(int dir, int x, int y, int (&mazeMap)[20][20] )
+int numberOfTimesLeft(int dir, int x, int y, node (&mazeMap)[20][20] )
 {
     myTurnLeft(&dir);
     myMoveForward(&x, &y, &dir, mazeMap);
-    return mazeMap[x][y];
+    return mazeMap[x][y].timesVisited;
 }
 
-int numberOfTimesRight(int dir, int x, int y, int (&mazeMap)[20][20] )
+int numberOfTimesRight(int dir, int x, int y, node (mazeMap)[20][20] )
 {
     myTurnRight(&dir);
     myMoveForward(&x, &y, &dir, mazeMap);
-    return mazeMap[x][y];
+    return mazeMap[x][y].timesVisited;
 }
 
-int numberOfTimesForward(int dir, int x, int y, int (&mazeMap)[20][20] )
+int numberOfTimesForward(int dir, int x, int y, node (&mazeMap)[20][20] )
 {
     myMoveForward(&x, &y, &dir, mazeMap);
-    return mazeMap[x][y];
+    return mazeMap[x][y].timesVisited;
 }
+
 
 void microMouseServer::studentAI()
 {
@@ -84,8 +88,86 @@ void microMouseServer::studentAI()
    static int x=0;
    static int y=19; //shows in bottom left corner of array
    static int dir = 0;
-   static node mazeMap[20][20] = {0};
+   static node mazeMap[20][20];
 
+   switch (dir){
+    case 0: //forward
+      { if(!isWallForward())
+          {
+           mazeMap[x][y].north = & (mazeMap[x][y-1]);
+           mazeMap[x][y-1].south = &(mazeMap[x][y] );
+           }
+       else if (!isWallRight())
+       {
+           mazeMap[x][y].east = & (mazeMap[x-1][y]);
+           mazeMap[x-1][y].west = &(mazeMap[x][y] );
+        }
+       else if(!isWallLeft())
+       {
+           mazeMap[x][y].west = &(mazeMap[x-1][y]);
+           mazeMap[x-1][y].east = &(mazeMap[x][y]);
+        }
+
+       break;
+       }
+    case 1: //right
+       {
+       if(!isWallForward())
+       {
+          mazeMap[x][y].east = &mazeMap[x+1][y];
+          mazeMap[x+1][y].west = &mazeMap[x][y];
+       }
+       else if(!isWallRight())
+        {
+           mazeMap[x][y].south = &mazeMap[x][y+1];
+           mazeMap[x][y+1].north = &mazeMap[x][y];
+        }
+       else if(!isWallLeft())
+       {
+           mazeMap[x][y].north = &mazeMap[x][y-1];
+           mazeMap[x][y-1].south = &mazeMap[x][y];
+       }
+       break;
+        }
+     case 2: //down
+     {
+       if(!isWallForward())
+       {
+           mazeMap[x][y].south = &mazeMap[x][y+1];
+           mazeMap[x][y+1].north = &mazeMap[x][y];
+       }
+       else if(!isWallRight())
+       {
+           mazeMap[x][y].west = &mazeMap[x-1][y];
+           mazeMap[x-1][y].east = &mazeMap[x][y];
+       }
+       else if(!isWallLeft())
+       {
+           mazeMap[x][y].east = &mazeMap[x+1][y];
+           mazeMap[x+1][y].west = &mazeMap[x][y];
+        }
+       break;
+      }
+     case 3: //left
+      {
+        if(!isWallForward())
+        {
+            mazeMap[x][y].west = &mazeMap[x-1][y];
+            mazeMap[x-1][y].east = &mazeMap[x][y];
+         }
+         else if(!isWallRight())
+        {
+            mazeMap[x][y].north = &mazeMap[x][y-1];
+            mazeMap[x][y-1].south = &mazeMap[x][y];
+         }
+        else if(!isWallLeft())
+        {
+            mazeMap[x][y].south = &mazeMap[x][y+1];
+            mazeMap[x][y+1].north = &mazeMap[x][y];
+        }
+        break;
+        }
+  }
   // static square mapSq[20][20];
 
     //use enum, find state to get exploring vs. shortest path
@@ -146,63 +228,21 @@ void microMouseServer::studentAI()
    moveForward();
    myMoveForward(&x, &y, &dir, mazeMap);
 
+   //links nodes together if no walls
 
 
-   //links nodes
-
-   switch (dir){
-
-    case 0: //forward
-      { if(!isWallForward())
-           mazeMap[x][y].north = &mazeMap[x][y-1].south;
-       else if (!isWallRight())
-           mazeMap[x][y].east = &mazeMap[x-1][y].west;
-       else if(!isWallLeft())
-           mazeMap[x][y].west = &mazeMap[x-1][y].east;
-       break;
-       }
-    case 1: //right
-       {
-       if(!isWallForward())
-           mazeMap[x][y].east = &mazeMap[x+1][y].west;
-       else if(!isWallRight())
-           mazeMap[x][y].south = &mazeMap[x][y+1].north;
-       else if(!isWallLeft())
-           mazeMap[x][y].north = &mazeMap[x][y-1].south;
-       break;
-        }
-     case 2: //down
-     {
-       if(!isWallForward())
-           mazeMap[x][y].south = &mazeMap[x][y+1].north;
-       else if(!isWallRight())
-           mazeMap[x][y].west = &mazeMap[x-1][y].east;
-       else if(!isWallLeft())
-           mazeMap[x][y].east = &mazeMap[x+1][y].west;
-       break;
-      }
-     case 3: //left
-      {
-        if(!isWallForward())
-            mazeMap[x][y].west = &mazeMap[x-1][y].east;
-         else if(!isWallRight())
-            mazeMap[x][y].north = &mazeMap[x][y-1].south;
-        else if(!isWallLeft())
-            mazeMap[x][y].south = &mazeMap[x][y+1].north;
-        break;
-        }
-  }
 
    //finish-----------------------------------
     if (counterR > 2 || counterL > 2 )
        {
         foundFinish();
+        mazeMap[x][y].finished = true;
        }
 
     cout<<endl;
         for(int i=0; i<20; i++){
             for(int j=0; j<20; j++){
-                cout<<mazeMap[j][i]<<" ";
+                cout<<mazeMap[j][i].timesVisited<<" ";
             }
             cout<<endl;
        }
