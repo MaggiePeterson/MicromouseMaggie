@@ -8,43 +8,16 @@ using namespace std;
   3 -|- 1
      2
 */
+struct node {
 
-class square { //SHORTEST PATH: make square class in array, detects where walls are
-
-    bool isWallNorth;
-    bool isWallEast;
-    bool isWallSouth;
-    bool isWallWest;
-
-public:
-    void setWallNorth(bool wallN);
-    void setWallEast(bool wallE);
-    void setWallSouth(bool wallS);
-    void setWallWest(bool wallW);
+    int timesVisited;
+    node* north = NULL;
+    node* east = NULL;
+    node* south = NULL;
+    node* west = NULL;
 
 };
 
-void square::setWallNorth(bool wallN) //wall is north if value gets is true/ false
-{
-    this->isWallNorth = wallN;
-}
-
-void square::setWallEast(bool wallE)
-{
-    this->isWallEast = wallE;
-}
-
-void square::setWallSouth(bool wallS)
-{
-    this->isWallSouth = wallS;
-}
-
-void square::setWallWest(bool wallW)
-{
-    this->isWallWest = wallW;
-}
-
-square mapSq[20][20];
 
 //---------------------------
 
@@ -111,7 +84,9 @@ void microMouseServer::studentAI()
    static int x=0;
    static int y=19; //shows in bottom left corner of array
    static int dir = 0;
-   static int mazeMap[20][20]= {0}; //20 spaces, walls have space in array
+   static node mazeMap[20][20] = {0};
+
+  // static square mapSq[20][20];
 
     //use enum, find state to get exploring vs. shortest path
    //find finish (first time) ------------------------------------
@@ -123,6 +98,7 @@ void microMouseServer::studentAI()
         {
            counterR = 0;
            counterL = 0;
+
         }
       else if (!isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) )
        {
@@ -130,6 +106,7 @@ void microMouseServer::studentAI()
            myTurnRight(&dir);
            counterR++;
            counterL=0;
+
        }
       else
         {
@@ -169,38 +146,52 @@ void microMouseServer::studentAI()
    moveForward();
    myMoveForward(&x, &y, &dir, mazeMap);
 
-   //find where walls are------------------------
+
+
+   //links nodes
 
    switch (dir){
+
     case 0: //forward
-      {
-       mapSq[x][y].setWallNorth(isWallForward());
-       mapSq[x][y].setWallEast(isWallRight());
-       mapSq[x][y].setWallWest(isWallLeft());
+      { if(!isWallForward())
+           mazeMap[x][y].north = &mazeMap[x][y-1].south;
+       else if (!isWallRight())
+           mazeMap[x][y].east = &mazeMap[x-1][y].west;
+       else if(!isWallLeft())
+           mazeMap[x][y].west = &mazeMap[x-1][y].east;
+       break;
+       }
+    case 1: //right
+       {
+       if(!isWallForward())
+           mazeMap[x][y].east = &mazeMap[x+1][y].west;
+       else if(!isWallRight())
+           mazeMap[x][y].south = &mazeMap[x][y+1].north;
+       else if(!isWallLeft())
+           mazeMap[x][y].north = &mazeMap[x][y-1].south;
+       break;
+        }
+     case 2: //down
+     {
+       if(!isWallForward())
+           mazeMap[x][y].south = &mazeMap[x][y+1].north;
+       else if(!isWallRight())
+           mazeMap[x][y].west = &mazeMap[x-1][y].east;
+       else if(!isWallLeft())
+           mazeMap[x][y].east = &mazeMap[x+1][y].west;
        break;
       }
-   case 1: //right
-     {
-      mapSq[x][y].setWallEast(isWallForward()); //forward if mouse is facing right, square has wall East
-      mapSq[x][y].setWallSouth(isWallRight());
-      mapSq[x][y].setWallNorth(isWallLeft());
-      break;
-     }
-   case 2: //down
-     {
-      mapSq[x][y].setWallSouth(isWallForward()); //is facing down, wall is forward, wall is objectively south
-      mapSq[x][y].setWallWest(isWallRight());
-      mapSq[x][y].setWallEast(isWallLeft());
-      break;
-     }
-   case 3: //left
-     {
-      mapSq[x][y].setWallWest(isWallForward());
-      mapSq[x][y].setWallNorth(isWallRight());
-      mapSq[x][y].setWallSouth(isWallLeft());
-      break;
-     }
-   }
+     case 3: //left
+      {
+        if(!isWallForward())
+            mazeMap[x][y].west = &mazeMap[x-1][y].east;
+         else if(!isWallRight())
+            mazeMap[x][y].north = &mazeMap[x][y-1].south;
+        else if(!isWallLeft())
+            mazeMap[x][y].south = &mazeMap[x][y+1].north;
+        break;
+        }
+  }
 
    //finish-----------------------------------
     if (counterR > 2 || counterL > 2 )
