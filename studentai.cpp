@@ -1,6 +1,7 @@
 #include "micromouseserver.h"
 #include <iostream>
 using namespace std;
+#include <QQueue>
 
 //DIR: forward 0, right 1, down 2, left 3
 
@@ -10,7 +11,7 @@ using namespace std;
 */
 struct node {
 
-    int timesVisited;
+    int timesVisited,xN,yN;
     bool finished = false;
 
     node* previousNode = NULL;
@@ -47,17 +48,20 @@ void myMoveForward(int *x, int *y, int *dir, node (mazeMap)[20][20]) //changes x
      mazeMap[*x][*y].timesVisited+=1; //increments value in that position, counts how many times been to coodinate
 
     if (*dir == 0)
-        *y-=1;
 
+        *y-=1;
     else if (*dir==1)     
+
         *x+=1;
 
+
     else if (*dir==2)    
+
         *y+=1;
 
     else // dir ==3     
-        *x-=1;
 
+        *x-=1;
 }
 
 int numberOfTimesLeft(int dir, int x, int y, node (&mazeMap)[20][20] )
@@ -67,7 +71,7 @@ int numberOfTimesLeft(int dir, int x, int y, node (&mazeMap)[20][20] )
     return mazeMap[x][y].timesVisited;
 }
 
-int numberOfTimesRight(int dir, int x, int y, node (mazeMap)[20][20] )
+int numberOfTimesRight(int dir, int x, int y, node (&mazeMap)[20][20] )
 {
     myTurnRight(&dir);
     myMoveForward(&x, &y, &dir, mazeMap);
@@ -81,6 +85,52 @@ int numberOfTimesForward(int dir, int x, int y, node (&mazeMap)[20][20] )
 }
 
 
+void findShortestPath(int x, int y, node (&mazeMap)[20][20] )
+{
+     QQueue<node*> q; //if visisted node once dont go back, boolean
+
+     q.enqueue(& (mazeMap[0][19])); //adds starting position to queue
+
+     while(!q.head()->finished) // adds queue but doesnt delete it, until found finish
+     {
+        node* currNode = q.dequeue(); //currNode points to removed value
+
+        if (currNode->north != NULL) //finds adjacent nodes
+          {
+            currNode->north->previousNode = currNode; //if north has opening spot, add next node to list remove old one
+            q.enqueue(currNode->north); //adds north node to queue
+           }
+         if(currNode->east != NULL) //opening right...
+        {
+            currNode->east->previousNode = currNode;
+            q.enqueue(currNode->east);
+        }
+        if(currNode->west != NULL) //opening left...
+        {
+            currNode->west->previousNode = currNode;
+            q.enqueue(currNode->west);
+        }
+        if(currNode->south != NULL) //opening left...
+        {
+            currNode->south->previousNode = currNode;
+            q.enqueue(currNode->south);
+        }
+      }
+
+     node* pathNode = &(mazeMap[x][y]); //sets pathNode pointer to position of finish
+
+
+     while(pathNode->xN != 0 && pathNode->yN != 19)
+     {
+            pathNode->timesVisited = -99;
+            pathNode = pathNode->previousNode; //pathnode points to previous node, goes back in path
+        }
+                /*while point does not 0,19
+                 * path . visit = -100
+                 * path = path. prev */
+
+
+}
 void microMouseServer::studentAI()
 {
    static int counterR; //for ending, counts how many times mouse turnsRight and moveForward
@@ -114,18 +164,18 @@ void microMouseServer::studentAI()
        {
        if(!isWallForward())
        {
-          mazeMap[x][y].east = &mazeMap[x+1][y];
-          mazeMap[x+1][y].west = &mazeMap[x][y];
+          mazeMap[x][y].east = &(mazeMap[x+1][y]);
+          mazeMap[x+1][y].west = &(mazeMap[x][y]);
        }
        else if(!isWallRight())
         {
-           mazeMap[x][y].south = &mazeMap[x][y+1];
-           mazeMap[x][y+1].north = &mazeMap[x][y];
+           mazeMap[x][y].south = &(mazeMap[x][y+1]);
+           mazeMap[x][y+1].north = &(mazeMap[x][y]);
         }
        else if(!isWallLeft())
        {
-           mazeMap[x][y].north = &mazeMap[x][y-1];
-           mazeMap[x][y-1].south = &mazeMap[x][y];
+           mazeMap[x][y].north = &(mazeMap[x][y-1]);
+           mazeMap[x][y-1].south = &(mazeMap[x][y]);
        }
        break;
         }
@@ -133,18 +183,18 @@ void microMouseServer::studentAI()
      {
        if(!isWallForward())
        {
-           mazeMap[x][y].south = &mazeMap[x][y+1];
-           mazeMap[x][y+1].north = &mazeMap[x][y];
+           mazeMap[x][y].south = &(mazeMap[x][y+1]);
+           mazeMap[x][y+1].north = &(mazeMap[x][y]);
        }
        else if(!isWallRight())
        {
-           mazeMap[x][y].west = &mazeMap[x-1][y];
-           mazeMap[x-1][y].east = &mazeMap[x][y];
+           mazeMap[x][y].west = &(mazeMap[x-1][y]);
+           mazeMap[x-1][y].east = &(mazeMap[x][y]);
        }
        else if(!isWallLeft())
        {
-           mazeMap[x][y].east = &mazeMap[x+1][y];
-           mazeMap[x+1][y].west = &mazeMap[x][y];
+           mazeMap[x][y].east = &(mazeMap[x+1][y]);
+           mazeMap[x+1][y].west = &(mazeMap[x][y]);
         }
        break;
       }
@@ -152,18 +202,18 @@ void microMouseServer::studentAI()
       {
         if(!isWallForward())
         {
-            mazeMap[x][y].west = &mazeMap[x-1][y];
-            mazeMap[x-1][y].east = &mazeMap[x][y];
+            mazeMap[x][y].west = &(mazeMap[x-1][y]);
+            mazeMap[x-1][y].east = &(mazeMap[x][y]);
          }
          else if(!isWallRight())
         {
-            mazeMap[x][y].north = &mazeMap[x][y-1];
-            mazeMap[x][y-1].south = &mazeMap[x][y];
+            mazeMap[x][y].north = &(mazeMap[x][y-1]);
+            mazeMap[x][y-1].south = &(mazeMap[x][y]);
          }
         else if(!isWallLeft())
         {
-            mazeMap[x][y].south = &mazeMap[x][y+1];
-            mazeMap[x][y+1].north = &mazeMap[x][y];
+            mazeMap[x][y].south = &(mazeMap[x][y+1]);
+            mazeMap[x][y+1].north = &(mazeMap[x][y]);
         }
         break;
         }
@@ -225,8 +275,11 @@ void microMouseServer::studentAI()
        }
     }
 
+   mazeMap[x][y].xN = x;
+   mazeMap[x][y].yN = y;
    moveForward();
    myMoveForward(&x, &y, &dir, mazeMap);
+
 
    //links nodes together if no walls
 
@@ -235,17 +288,11 @@ void microMouseServer::studentAI()
    //finish-----------------------------------
     if (counterR > 2 || counterL > 2 )
        {
-        foundFinish();
         mazeMap[x][y].finished = true;
+        findShortestPath(x,y,mazeMap);
+        foundFinish();
        }
 
-    cout<<endl;
-        for(int i=0; i<20; i++){
-            for(int j=0; j<20; j++){
-                cout<<mazeMap[j][i].timesVisited<<" ";
-            }
-            cout<<endl;
-       }
-        cout<<endl;
+
 }
 
