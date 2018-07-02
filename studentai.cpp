@@ -1,3 +1,4 @@
+
 #include "micromouseserver.h"
 #include <iostream>
 using namespace std;
@@ -9,10 +10,12 @@ using namespace std;
   3 -|- 1
      2
 */
+
 struct node {
 
     int timesVisited,xN,yN;
     bool finished = false;
+    bool visitedNode = false;
 
     node* previousNode = NULL;
     node* north = NULL;
@@ -21,9 +24,6 @@ struct node {
     node* west = NULL;
 
 };
-
-
-//---------------------------
 
 void myTurnLeft(int *dir) //changes direction of mouse everytime turns left
 {
@@ -36,10 +36,10 @@ void myTurnLeft(int *dir) //changes direction of mouse everytime turns left
 
 void myTurnRight(int *dir) //sets direction of mouse everytime turns right
 {
-    if (*dir==3)    
+    if (*dir==3)
         *dir=0;
 
-    else    
+    else
         *dir+=1;
 }
 
@@ -50,16 +50,16 @@ void myMoveForward(int *x, int *y, int *dir, node (mazeMap)[20][20]) //changes x
     if (*dir == 0)
 
         *y-=1;
-    else if (*dir==1)     
+    else if (*dir==1)
 
         *x+=1;
 
 
-    else if (*dir==2)    
+    else if (*dir==2)
 
         *y+=1;
 
-    else // dir ==3     
+    else // dir ==3
 
         *x-=1;
 }
@@ -87,48 +87,46 @@ int numberOfTimesForward(int dir, int x, int y, node (&mazeMap)[20][20] )
 
 void findShortestPath(int x, int y, node (&mazeMap)[20][20] )
 {
-     QQueue<node*> q; //if visisted node once dont go back, boolean
-
+     QQueue <node*> q;              //if visisted node once dont go back, boolean
      q.enqueue(& (mazeMap[0][19])); //adds starting position to queue
 
-     while(!q.head()->finished) // adds queue but doesnt delete it, until found finish
-     {
+     while(!q.head()->finished)     // adds queue but doesnt delete it, until found finish
+      {
         node* currNode = q.dequeue(); //currNode points to removed value
 
-        if (currNode->north != NULL) //finds adjacent nodes
-          {
-            currNode->north->previousNode = currNode; //if north has opening spot, add next node to list remove old one
-            q.enqueue(currNode->north); //adds north node to queue
-           }
-         if(currNode->east != NULL) //opening right...
+        if (currNode->north != NULL && !currNode->visitedNode) //finds adjacent nodes, doesnt count node if already counted
+         {
+            currNode->north->previousNode = currNode;       //currNode is previous node of node North
+            q.enqueue(currNode->north);                     //adds north node to queue
+            currNode->visitedNode = true;
+         }
+         if(currNode->east != NULL && !currNode->visitedNode) //opening right && if node has not been checked/ visited
         {
             currNode->east->previousNode = currNode;
             q.enqueue(currNode->east);
+            currNode->visitedNode = true; //node has been visited/ checked
         }
-        if(currNode->west != NULL) //opening left...
+        if(currNode->west != NULL && !currNode->visitedNode) //opening left...
         {
             currNode->west->previousNode = currNode;
             q.enqueue(currNode->west);
+            currNode->visitedNode = true;
         }
-        if(currNode->south != NULL) //opening left...
+        if(currNode->south != NULL && !currNode->visitedNode) //opening down...
         {
             currNode->south->previousNode = currNode;
             q.enqueue(currNode->south);
+            currNode->visitedNode = true;
         }
       }
 
      node* pathNode = &(mazeMap[x][y]); //sets pathNode pointer to position of finish
 
-
-     while(pathNode->xN != 0 && pathNode->yN != 19)
+     while(pathNode->xN != 0 && pathNode->yN != 19) //finds shortest path, marks spots as -99
      {
             pathNode->timesVisited = -99;
             pathNode = pathNode->previousNode; //pathnode points to previous node, goes back in path
-        }
-                /*while point does not 0,19
-                 * path . visit = -100
-                 * path = path. prev */
-
+      }
 
 }
 void microMouseServer::studentAI()
@@ -218,10 +216,8 @@ void microMouseServer::studentAI()
         break;
         }
   }
-  // static square mapSq[20][20];
 
-    //use enum, find state to get exploring vs. shortest path
-   //find finish (first time) ------------------------------------
+   //ISLANDED ALGORITHM ------------------------------------
 
    if (!isWallLeft())
     {
@@ -230,7 +226,6 @@ void microMouseServer::studentAI()
         {
            counterR = 0;
            counterL = 0;
-
         }
       else if (!isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) )
        {
@@ -238,7 +233,6 @@ void microMouseServer::studentAI()
            myTurnRight(&dir);
            counterR++;
            counterL=0;
-
        }
       else
         {
@@ -275,24 +269,17 @@ void microMouseServer::studentAI()
        }
     }
 
-   mazeMap[x][y].xN = x;
+   mazeMap[x][y].xN = x; //sets x,y of node to x,y of array
    mazeMap[x][y].yN = y;
    moveForward();
    myMoveForward(&x, &y, &dir, mazeMap);
 
-
-   //links nodes together if no walls
-
-
-
    //finish-----------------------------------
     if (counterR > 2 || counterL > 2 )
        {
-        mazeMap[x][y].finished = true;
-        findShortestPath(x,y,mazeMap);
+        mazeMap[x][y].finished = true; //
+        findShortestPath(x,y,mazeMap); //find shortest path w/ nodes
         foundFinish();
        }
 
-
 }
-
