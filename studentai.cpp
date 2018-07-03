@@ -95,25 +95,25 @@ void findShortestPath(int x, int y, node (&mazeMap)[20][20] ) //BFR algorithm
          {
             currNode->north->previousNode = currNode;       //currNode is previous node of node North
             q.enqueue(currNode->north);                     //adds north node to queue
-            currNode->north->flag = true;
+            currNode->flag = true;
          }
          if(currNode->east != NULL && !currNode->east->flag) //opening right && if node has not been checked/ visited
         {
             currNode->east->previousNode = currNode;
             q.enqueue(currNode->east);
-            currNode->east->flag = true; //node has been visited/ checked
+            currNode->flag = true; //node has been visited/ checked
         }
         if(currNode->west != NULL && !currNode->west->flag) //opening left...
         {
             currNode->west->previousNode = currNode;
             q.enqueue(currNode->west);
-            currNode->west->flag = true;
+            currNode->flag = true;
         }
         if(currNode->south != NULL && !currNode->south->flag) //opening down...
         {
             currNode->south->previousNode = currNode;
             q.enqueue(currNode->south);
-            currNode->south->flag = true;
+            currNode->flag = true;
         }
       }
 
@@ -276,6 +276,7 @@ void microMouseServer::studentAI()
         mazeMap[x][y].finished = true;
         findShortestPath(x,y,mazeMap); //find shortest path w/ nodes
         foundFinish();
+
        }
 
 }
