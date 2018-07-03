@@ -84,37 +84,55 @@ int numberOfTimesForward(int dir, int x, int y, node (&mazeMap)[20][20] )
 
 void findShortestPath(int x, int y, node (&mazeMap)[20][20] ) //BFR algorithm
 {
-     QQueue <node*> q;              //if visisted node once dont go back, boolean
+     QQueue <node*> q;
      q.enqueue(& (mazeMap[0][19])); //adds starting position to queue
 
      while(!q.head()->finished)     // adds queue but doesnt delete it, until found finish
       {
-        node* currNode = q.dequeue(); //currNode points to removed value
+        node* currNode = q.dequeue(); //currNode points to removed value, empties q
 
         if (currNode->north != NULL && !currNode->north->flag) //finds adjacent nodes, doesnt count node if already counted
-         {
+         {           
             currNode->north->previousNode = currNode;       //currNode is previous node of node North
             q.enqueue(currNode->north);                     //adds north node to queue
             currNode->flag = true;
          }
+        else
+            q.enqueue(currNode);
+
          if(currNode->east != NULL && !currNode->east->flag) //opening right && if node has not been checked/ visited
         {
+            node* currNode = q.dequeue();
             currNode->east->previousNode = currNode;
             q.enqueue(currNode->east);
             currNode->flag = true; //node has been visited/ checked
         }
+         else
+             q.enqueue(currNode);
+
         if(currNode->west != NULL && !currNode->west->flag) //opening left...
         {
+            node* currNode = q.dequeue();
             currNode->west->previousNode = currNode;
             q.enqueue(currNode->west);
             currNode->flag = true;
         }
+        else
+            q.enqueue(currNode);
+
+
         if(currNode->south != NULL && !currNode->south->flag) //opening down...
         {
+            node* currNode = q.dequeue();
             currNode->south->previousNode = currNode;
             q.enqueue(currNode->south);
             currNode->flag = true;
         }
+        else
+            q.enqueue(currNode);
+
+
+
       }
 
      node* pathNode = &(mazeMap[x][y]); //sets pathNode pointer to position of finish
