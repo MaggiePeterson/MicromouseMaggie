@@ -97,42 +97,31 @@ void findShortestPath(int x, int y, node (&mazeMap)[20][20] ) //BFR algorithm
             q.enqueue(currNode->north);                     //adds north node to queue
             currNode->flag = true;
          }
-        else
-            q.enqueue(currNode);
 
-         if(currNode->east != NULL && !currNode->east->flag) //opening right && if node has not been checked/ visited
-        {
+         else if(currNode->east != NULL && !currNode->east->flag) //opening right && if node has not been checked/ visited
+         {
             node* currNode = q.dequeue();
             currNode->east->previousNode = currNode;
             q.enqueue(currNode->east);
             currNode->flag = true; //node has been visited/ checked
-        }
-         else
-             q.enqueue(currNode);
+         }
 
-        if(currNode->west != NULL && !currNode->west->flag) //opening left...
-        {
+       else if(currNode->west != NULL && !currNode->west->flag) //opening left...
+            {
             node* currNode = q.dequeue();
             currNode->west->previousNode = currNode;
             q.enqueue(currNode->west);
             currNode->flag = true;
-        }
-        else
-            q.enqueue(currNode);
-
-
-        if(currNode->south != NULL && !currNode->south->flag) //opening down...
-        {
+         }
+        else if(currNode->south != NULL && !currNode->south->flag) //opening down...
+            {
             node* currNode = q.dequeue();
             currNode->south->previousNode = currNode;
             q.enqueue(currNode->south);
             currNode->flag = true;
-        }
+            }
         else
             q.enqueue(currNode);
-
-
-
       }
 
      node* pathNode = &(mazeMap[x][y]); //sets pathNode pointer to position of finish
