@@ -235,15 +235,12 @@ void microMouseServer::studentAI()
        counterL++;
      }
 
-   else if (!isWallForward() && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) ||
-       (isWallLeft() && (!isWallForward() && !isWallRight() ) && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesRight(dir, x, y,mazeMap))
-        || (isWallRight() && !isWallForward())  )
-)
+     else if (!isWallForward() && !(!isWallRight() && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesRight(dir, x, y,mazeMap)) ))
         {
            counterR = 0;
            counterL = 0;
         }
-   else if (!isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) || (isWallLeft() && !isWallRight() ))
+   else if (!isWallRight())
        {
            turnRight();
            myTurnRight(&dir);
