@@ -82,7 +82,7 @@ int numberOfTimesForward(int dir, int x, int y, node (&mazeMap)[20][20] )
     return mazeMap[x][y].timesVisited;
 }
 
-void findShortestPath(int x, int y, node (&mazeMap)[20][20] ) //BFR algorithm
+void findShortestPath(node (&mazeMap)[20][20] ) //BFR algorithm
 {
      QQueue <node*> q;
      q.enqueue(& (mazeMap[0][19])); //adds starting position to queue
@@ -100,7 +100,7 @@ void findShortestPath(int x, int y, node (&mazeMap)[20][20] ) //BFR algorithm
 
          else if(currNode->east != NULL && !currNode->east->flag) //opening right && if node has not been checked/ visited
          {
-            node* currNode = q.dequeue();
+
             currNode->east->previousNode = currNode;
             q.enqueue(currNode->east);
             currNode->flag = true; //node has been visited/ checked
@@ -108,23 +108,26 @@ void findShortestPath(int x, int y, node (&mazeMap)[20][20] ) //BFR algorithm
 
        else if(currNode->west != NULL && !currNode->west->flag) //opening left...
             {
-            node* currNode = q.dequeue();
             currNode->west->previousNode = currNode;
             q.enqueue(currNode->west);
             currNode->flag = true;
          }
         else if(currNode->south != NULL && !currNode->south->flag) //opening down...
             {
-            node* currNode = q.dequeue();
+
             currNode->south->previousNode = currNode;
             q.enqueue(currNode->south);
             currNode->flag = true;
             }
         else
+           {
             q.enqueue(currNode);
+            currNode->finished= true;
+           }
+
       }
 
-     node* pathNode = &(mazeMap[x][y]); //sets pathNode pointer to position of finish
+     node* pathNode = q.head(); //sets pathNode pointer to position of finish
 
      while(pathNode->xN != 0 && pathNode->yN != 19) //until x,y of pathnode are 0,19 (at beginnning), backtrack from finish to start
      {
@@ -135,7 +138,7 @@ void findShortestPath(int x, int y, node (&mazeMap)[20][20] ) //BFR algorithm
 }
 void microMouseServer::studentAI()
 {
-   static int counterR, counterL; //for ending, counts how many times mouse turnsRight and moveForward
+   static int counterR = 0, counterL = 0; //for ending, counts how many times mouse turnsRight and moveForward
    static int x=0, y=19;    //shows in bottom left corner of array
    static int dir = 0;
    static node mazeMap[20][20]; //map of nodes
@@ -143,17 +146,18 @@ void microMouseServer::studentAI()
    //creates links between nodes when no wall separates
    switch (dir){
     case 0: //forward
-      { if(!isWallForward())
+      {
+       if(!isWallForward())
           {
-           mazeMap[x][y].north = & (mazeMap[x][y-1]); //north of node becomes upper node
-           mazeMap[x][y-1].south = &(mazeMap[x][y] ); //south of upper node becomes lower node
+           mazeMap[x][y].north = &(mazeMap[x][y-1]); //north of node becomes upper node
+           mazeMap[x][y-1].south = &(mazeMap[x][y]); //south of upper node becomes lower node
            }
-       else if (!isWallRight())
+        if (!isWallRight())
        {
            mazeMap[x][y].east = & (mazeMap[x+1][y]);
-           mazeMap[x+1][y].west = &(mazeMap[x][y] );
+           mazeMap[x+1][y].west = &(mazeMap[x][y]);
         }
-       else if(!isWallLeft())
+        if(!isWallLeft())
        {
            mazeMap[x][y].west = &(mazeMap[x-1][y]);
            mazeMap[x-1][y].east = &(mazeMap[x][y]);
@@ -247,7 +251,7 @@ void microMouseServer::studentAI()
     }
    else
    {
-       if (!isWallForward() && !isWallRight() && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesRight(dir, x, y,mazeMap)) || (isWallRight() && !isWallForward()) )
+       if (( !isWallForward() && !isWallRight() )&& (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesRight(dir, x, y,mazeMap)) || (isWallRight() && !isWallForward())  )
        {
            counterR = 0;
            counterL = 0;
@@ -272,18 +276,27 @@ void microMouseServer::studentAI()
        }
     }
 
+
    mazeMap[x][y].xN = x; //sets x,y of node to x,y of array
    mazeMap[x][y].yN = y;
    moveForward();
    myMoveForward(&x, &y, &dir, mazeMap);
 
+
+
+
    //finish
     if (counterR > 2 || counterL > 2 )
        {
-        mazeMap[x][y].finished = true;
-        findShortestPath(x,y,mazeMap); //find shortest path w/ nodes
+
+        findShortestPath(mazeMap);
         foundFinish();
 
+        x = 0;
+        y = 0;
+        dir = 0;
+        counterR = 0;
+        counterL = 0;
        }
 
 }
