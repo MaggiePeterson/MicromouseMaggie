@@ -226,8 +226,8 @@ void microMouseServer::studentAI()
 
    //ISLANDED ALGORITHM ------------------------------------
 
-   if (!isWallLeft() && !(!isWallForward() && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) &&
-                          !(!isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)))))
+   if (!isWallLeft() && !(!isWallForward() && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap))) &&
+                         !(!isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) ))
     {
        turnLeft();
        myTurnLeft(&dir);
