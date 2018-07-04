@@ -235,12 +235,15 @@ void microMouseServer::studentAI()
        counterL++;
      }
 
-   else if (!isWallForward() && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)))
+   else if (!isWallForward() && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) ||
+       (isWallLeft() && (!isWallForward() && !isWallRight() ) && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesRight(dir, x, y,mazeMap))
+        || (isWallRight() && !isWallForward())  )
+)
         {
            counterR = 0;
            counterL = 0;
         }
-   else if (!isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) )
+   else if (!isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) || (isWallLeft() && !isWallRight() ))
        {
            turnRight();
            myTurnRight(&dir);
@@ -248,32 +251,16 @@ void microMouseServer::studentAI()
            counterL=0;
        }
 
-   else
-   {
-       if (( !isWallForward() && !isWallRight() )&& (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesRight(dir, x, y,mazeMap)) || (isWallRight() && !isWallForward())  )
-       {
-           counterR = 0;
-           counterL = 0;
-       }
-     else  if(!isWallRight() )
-       {
-           turnRight();
-           myTurnRight(&dir);
-           counterR++;
-           counterL=0;
-       }
-
-       else if (isWallForward() && isWallRight()) //dead end
+       else //dead end
        {
            turnLeft();
            myTurnLeft(&dir);
            turnLeft();
            myTurnLeft(&dir);
-
            counterR = 0;
            counterL= 0;
        }
-    }
+
 
 
    mazeMap[x][y].xN = x; //sets x,y of node to x,y of array
@@ -285,7 +272,6 @@ void microMouseServer::studentAI()
    //finish
     if (counterR > 2 || counterL > 2 )
        {
-
         findShortestPath(mazeMap);
         mazeMap[x][y].finished = true;
         foundFinish();
