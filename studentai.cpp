@@ -235,7 +235,7 @@ void microMouseServer::studentAI()
        counterL++;
      }
 
-     else if (!isWallForward() && !(!isWallRight() && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesRight(dir, x, y,mazeMap)) ))
+     else if (!isWallForward() && !(!isWallRight() && (numberOfTimesForward(dir, x, y,mazeMap) > numberOfTimesRight(dir, x, y,mazeMap)) ))
         {
            counterR = 0;
            counterL = 0;
@@ -269,8 +269,8 @@ void microMouseServer::studentAI()
    //finish
     if (counterR > 2 || counterL > 2 )
        {
+         mazeMap[x][y].finished = true;
         findShortestPath(mazeMap);
-        mazeMap[x][y].finished = true;
         foundFinish();
 
         x = 0;
