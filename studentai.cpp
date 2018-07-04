@@ -283,17 +283,16 @@ void microMouseServer::studentAI()
    myMoveForward(&x, &y, &dir, mazeMap);
 
 
-
-
    //finish
     if (counterR > 2 || counterL > 2 )
        {
 
         findShortestPath(mazeMap);
+        mazeMap[x][y].finished = true;
         foundFinish();
 
         x = 0;
-        y = 0;
+        y = 19;
         dir = 0;
         counterR = 0;
         counterL = 0;
