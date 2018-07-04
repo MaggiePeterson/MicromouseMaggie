@@ -226,29 +226,28 @@ void microMouseServer::studentAI()
 
    //ISLANDED ALGORITHM ------------------------------------
 
-   if (!isWallLeft())
+   if (!isWallLeft() && !(!isWallForward() && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) &&
+                          !(!isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)))))
     {
+       turnLeft();
+       myTurnLeft(&dir);
+       counterR = 0;
+       counterL++;
+     }
 
-       if (!isWallForward() && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)))
+   else if (!isWallForward() && (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)))
         {
            counterR = 0;
            counterL = 0;
         }
-      else if (!isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) )
+   else if (!isWallRight() && (numberOfTimesRight(dir, x, y,mazeMap) < numberOfTimesLeft(dir,x,y,mazeMap)) )
        {
            turnRight();
            myTurnRight(&dir);
            counterR++;
            counterL=0;
        }
-      else
-        {
-           turnLeft();
-           myTurnLeft(&dir);
-           counterR = 0;
-           counterL++;
-         }
-    }
+
    else
    {
        if (( !isWallForward() && !isWallRight() )&& (numberOfTimesForward(dir, x, y,mazeMap) < numberOfTimesRight(dir, x, y,mazeMap)) || (isWallRight() && !isWallForward())  )
