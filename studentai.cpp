@@ -17,6 +17,7 @@ struct node {
     int xN =0,yN=19;
     bool finished = false;
     bool flag = false;      //visited Node
+    int level = 0;
 
     node* previousNode = NULL;
     node* north = NULL;
@@ -87,53 +88,49 @@ void findShortestPath(node (&mazeMap)[20][20] ) //BFR algorithm
      QQueue <node*> q;
      q.enqueue(& (mazeMap[0][19])); //adds starting position to queue
 
+
      while(!q.head()->finished)     // adds queue but doesnt delete it, until found finish
       {
-        node* currNode = q.dequeue(); //currNode points to removed value, empties q
+         node* currNode = q.dequeue();//currNode points to removed value, empties q
 
         if (currNode->north != NULL && !currNode->north->flag) //finds adjacent nodes, doesnt count node if already counted
-         {           
+         {
             currNode->north->previousNode = currNode;       //currNode is previous node of node North
             q.enqueue(currNode->north);                     //adds north node to queue
             currNode->flag = true;
          }
-
-         else if(currNode->east != NULL && !currNode->east->flag) //opening right && if node has not been checked/ visited
+       if(currNode->east != NULL && !currNode->east->flag) //opening right && if node has not been checked/ visited
          {
-
             currNode->east->previousNode = currNode;
             q.enqueue(currNode->east);
             currNode->flag = true; //node has been visited/ checked
          }
-
-       else if(currNode->west != NULL && !currNode->west->flag) //opening left...
+       if(currNode->west != NULL && !currNode->west->flag) //opening left...
             {
             currNode->west->previousNode = currNode;
             q.enqueue(currNode->west);
             currNode->flag = true;
          }
-        else if(currNode->south != NULL && !currNode->south->flag) //opening down...
-            {
-
+      if(currNode->south != NULL && !currNode->south->flag) //opening down...
+           {
             currNode->south->previousNode = currNode;
             q.enqueue(currNode->south);
             currNode->flag = true;
-            }
-        else
-           {
-            q.enqueue(currNode);
-            currNode->finished= true;
            }
-
+        q.enqueue(currNode);
       }
 
      node* pathNode = q.head(); //sets pathNode pointer to position of finish
 
-     while(pathNode->xN != 0 && pathNode->yN != 19) //until x,y of pathnode are 0,19 (at beginnning), backtrack from finish to start
+     //until x,y of pathnode are 0,19 (at beginnning), backtrack from finish to start
+
+     while(!(pathNode->xN == 0 && pathNode->yN == 19))
      {
             pathNode->timesVisited = -99; //mark path from finish to start with -99 (least visited)
             pathNode = pathNode->previousNode; //pathnode points to previous node, goes back in path, continues
+
       }
+     pathNode->timesVisited = -99;
 
 }
 void microMouseServer::studentAI()
@@ -258,8 +255,6 @@ void microMouseServer::studentAI()
            counterL= 0;
        }
 
-
-
    mazeMap[x][y].xN = x; //sets x,y of node to x,y of array
    mazeMap[x][y].yN = y;
    moveForward();
@@ -269,7 +264,7 @@ void microMouseServer::studentAI()
    //finish
     if (counterR > 2 || counterL > 2 )
        {
-         mazeMap[x][y].finished = true;
+         mazeMap[x][y].finished = true;         
         findShortestPath(mazeMap);
         foundFinish();
 
