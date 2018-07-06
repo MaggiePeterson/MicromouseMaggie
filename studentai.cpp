@@ -117,7 +117,7 @@ void findShortestPath(node (&mazeMap)[20][20] ) //BFR algorithm
             q.enqueue(currNode->south);
             currNode->flag = true;
            }
-        q.enqueue(currNode);
+
       }
 
      node* pathNode = q.head(); //sets pathNode pointer to position of finish
@@ -139,6 +139,7 @@ void microMouseServer::studentAI()
    static int x=0, y=19;    //shows in bottom left corner of array
    static int dir = 0;
    static node mazeMap[20][20]; //map of nodes
+   static int timesRun = 0;
 
    //creates links between nodes when no wall separates
    switch (dir){
@@ -264,9 +265,15 @@ void microMouseServer::studentAI()
    //finish
     if (counterR > 2 || counterL > 2 )
        {
-         mazeMap[x][y].finished = true;         
-        findShortestPath(mazeMap);
+         mazeMap[x][y].finished = true;
+
+         if (timesRun == 0)
+         {
+            findShortestPath(mazeMap);
+         }
+
         foundFinish();
+        timesRun++;
 
         x = 0;
         y = 19;
